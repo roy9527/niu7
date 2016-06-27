@@ -1,22 +1,24 @@
 package love.pinggu.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.ashokvarma.bottomnavigation.BottomNavigationBar;
-import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import love.pinggu.R;
 import love.pinggu.base.BaseActivity;
 import love.pinggu.fragment.ContentFragment;
+import love.pinggu.fragment.ContentRecyclerViewAdapter;
+import love.pinggu.fragment.dummy.DummyContent;
 
 public class MainActivity extends BaseActivity {
 
@@ -50,17 +52,15 @@ public class MainActivity extends BaseActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(0).setIcon(R.mipmap.ic_launcher).setText("");
-
-        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-
-        bottomNavigationBar
-                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Home"))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Books"))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Music"))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Music!"))
-                .setMode(BottomNavigationBar.MODE_FIXED)
-                .initialise();
+//        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+//
+//        bottomNavigationBar
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Home"))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Books"))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Music"))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_launcher,"Music!"))
+//                .setMode(BottomNavigationBar.MODE_FIXED)
+//                .initialise();
     }
 
     /**
@@ -91,11 +91,17 @@ public class MainActivity extends BaseActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+            View view = inflater.inflate(R.layout.fragment_content_list, container, false);
+            if (view instanceof RecyclerView) {
+                Context context = view.getContext();
+                RecyclerView recyclerView = (RecyclerView) view;
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setAdapter(new ContentRecyclerViewAdapter(DummyContent.ITEMS));
+            }
+            return view;
         }
+
+
     }
 
     /**
@@ -110,8 +116,6 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             return ContentFragment.newInstance(20);
 //            return PlaceholderFragment.newInstance(position + 1);
         }
@@ -126,11 +130,11 @@ public class MainActivity extends BaseActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "平谷热点";
                 case 1:
-                    return "SECTION 2";
+                    return "推荐热闻";
                 case 2:
-                    return "SECTION 3";
+                    return "我的";
             }
             return null;
         }

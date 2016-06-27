@@ -22,6 +22,11 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
+    public ContentRecyclerViewAdapter(List<DummyItem> items) {
+        mValues = items;
+        mListener = null;
+    }
+
     public ContentRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
